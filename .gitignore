@@ -222,4 +222,7 @@ __marimo__/
 #directory
 src/network_toolkit.egg-info/
 
-# Tests
+# Scan output
+*.scan.json
+output/
+result.json
