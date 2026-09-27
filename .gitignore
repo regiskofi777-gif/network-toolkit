@@ -226,3 +226,7 @@ src/network_toolkit.egg-info/
 *.scan.json
 output/
 result.json
+
+# Scan outputs
+result.json
+*.scan.json

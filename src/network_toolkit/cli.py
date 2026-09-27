@@ -12,7 +12,7 @@ from network_toolkit.validation import (
     resolve_target,
     validate_threads,
 )
-from network_toolkit.output import print_result, print_summary
+from network_toolkit.output import print_result, print_summary, export_to_json
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -83,5 +83,22 @@ def run() -> int:
         return 130
     end_time = datetime.now()
     print_summary(start_time, end_time, len(port_list), len(results))
+
+    if args.output:
+        metadata = {
+            "target": target,
+            "protocol": args.protocol,
+            "port_range": f"{start}-{end}",
+            "threads": args.threads,
+            "started_at": start_time.isoformat(),
+            "finished_at": end_time.isoformat(),
+            "duration_seconds": round((end_time - start_time).total_seconds(), 3),
+            "total_ports": len(port_list),
+        }
+        try:
+            export_to_json(results, metadata, args.output)
+        except OSError as e:
+            print(f"[-] Impossible d'écrire le fichier : {e}", file=sys.stderr)
+            return 1
 
     return 0
