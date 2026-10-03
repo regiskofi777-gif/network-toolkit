@@ -10,7 +10,7 @@ def resolve_target(hostname: str) -> str:
     try:
         return socket.gethostbyname(hostname.strip())
     except socket.gaierror:
-        raise ValidationError(f"Impossible de résourdre '{hostname}'. Vérifiez l'adresse")
+        raise ValidationError(f"Impossible de résoudre '{hostname}'. Vérifiez l'adresse")
 
 def parse_port_range(value: str) -> tuple[int, int]:
     if "-" not in value:
