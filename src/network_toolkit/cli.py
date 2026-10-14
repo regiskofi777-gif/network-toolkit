@@ -1,5 +1,6 @@
 """Interface en ligne de commande"""
 
+from network_toolkit.logger import setup_logger 
 import argparse
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -50,6 +51,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 def run() -> int:
+    logger = setup_logger()
     parser = build_parser()
     args = parser.parse_args()
     try:
@@ -57,17 +59,16 @@ def run() -> int:
         start, end = parse_port_range(args.ports)
         validate_threads(args.threads)
     except ValidationError as e:
-        print(f"[-] Erreur de validation : {e}", file=sys.stderr)
+        logger.error("Erreur de validation : %s", e)
         return 1
 
     port_list = range(start, end + 1)
     scan_function = scan_tcp_port if args.protocol == "tcp" else scan_udp_port
 
-    print(f"[+] Cible : {target}")
-    print(f"[+] Protocole : {args.protocol.upper()}")
-    print(f"[+] Ports : {start}-{end} ({len(port_list)} ports)")
-    print(f"[+] Workers : {args.threads}")
-    print("\nAnalyse en cours...\n")
+    logger.info("Cible : %s", target)
+    logger.info("Protocole : %s", args.protocol.upper())
+    logger.info("Ports : %d-%d (%d ports)", start, end, len(port_list))
+    logger.info("Workers : %d", args.threads)
 
     start_time = datetime.now()
     results = []
@@ -79,7 +80,7 @@ def run() -> int:
                     results.append(result)
                     print_result(result)
     except KeyboardInterrupt:
-        print("\n[-] Scan interrompu par l'utilisateur.", file=sys.stderr)
+        logger.warning("Scan interrompu par l'utilisateur.")
         return 130
     end_time = datetime.now()
     print_summary(start_time, end_time, len(port_list), len(results))
@@ -98,7 +99,7 @@ def run() -> int:
         try:
             export_to_json(results, metadata, args.output)
         except OSError as e:
-            print(f"[-] Impossible d'écrire le fichier : {e}", file=sys.stderr)
+            logger.error("Impossible d'ecrire dans le fichier : %s", e)
             return 1
 
     return 0
