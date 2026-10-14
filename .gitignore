@@ -229,4 +229,5 @@ result.json
 
 # Scan outputs
 result.json
+result*.json
 *.scan.json
