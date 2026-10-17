@@ -1,11 +1,11 @@
 """Interface en ligne de commande"""
 
-from network_toolkit.logger import setup_logger 
 import argparse
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
+from network_toolkit.logger import setup_logger
+from network_toolkit.output import export_to_json, print_result, print_summary
 from network_toolkit.scanner import scan_tcp_port, scan_udp_port
 from network_toolkit.validation import (
     ValidationError,
@@ -13,42 +13,39 @@ from network_toolkit.validation import (
     resolve_target,
     validate_threads,
 )
-from network_toolkit.output import print_result, print_summary, export_to_json
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog = "network_toolkit",
-        description = "Scanner de ports TCP/UDP - usage autorisé uniquement.",
+        prog="network_toolkit",
+        description="Scanner de ports TCP/UDP - usage autorisé uniquement.",
     )
     parser.add_argument(
-        "-t", "--target",
-        required = True,
-        help = "Adresse IP ou nom d'hôte à scanner.",
+        "-t",
+        "--target",
+        required=True,
+        help="Adresse IP ou nom d'hôte à scanner.",
     )
     parser.add_argument(
-        "-p", "--ports",
-        required = True,
-        help = "Plage de ports au format 'début-fin' (ex:20-100)."
+        "-p", "--ports", required=True, help="Plage de ports au format 'début-fin' (ex:20-100)."
     )
     parser.add_argument(
-        "-T", "--threads",
-        type = int,
-        default = 100,
-        help = "Nombre de workers (1-500, par défaut:100)."
+        "-T", "--threads", type=int, default=100, help="Nombre de workers (1-500, par défaut:100)."
     )
     parser.add_argument(
-        "-o", "--output",
-        default = None,
-        help = "Fichier JSON de sortie (optionnel).",
+        "-o",
+        "--output",
+        default=None,
+        help="Fichier JSON de sortie (optionnel).",
     )
     parser.add_argument(
         "--protocol",
-        choices = ["tcp", "udp"],
-        default = "tcp",
-        help = "Protocole à scanner (par défaut : tcp).",
+        choices=["tcp", "udp"],
+        default="tcp",
+        help="Protocole à scanner (par défaut : tcp).",
     )
     return parser
+
 
 def run() -> int:
     logger = setup_logger()

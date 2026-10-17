@@ -1,8 +1,9 @@
-
 import socket
+
 
 class ValidationError(ValueError):
     pass
+
 
 def resolve_target(hostname: str) -> str:
     if not hostname or not hostname.strip():
@@ -10,7 +11,8 @@ def resolve_target(hostname: str) -> str:
     try:
         return socket.gethostbyname(hostname.strip())
     except socket.gaierror:
-        raise ValidationError(f"Impossible de résoudre '{hostname}'. Vérifiez l'adresse")
+        raise ValidationError(f"Impossible de résoudre '{hostname}'. Vérifiez l'adresse") from None
+
 
 def parse_port_range(value: str) -> tuple[int, int]:
     if "-" not in value:
@@ -20,9 +22,10 @@ def parse_port_range(value: str) -> tuple[int, int]:
         start = int(parts[0])
         end = int(parts[1])
     except ValueError:
-        raise ValidationError(f"Les ports doivent des nombres entiers : '{value}'.")
+        raise ValidationError(f"Les ports doivent des nombres entiers : '{value}'.") from None
     validate_port_range(start, end)
     return start, end
+
 
 def validate_port_range(start: int, end: int) -> None:
     if not (1 <= start <= 65535):
@@ -32,9 +35,9 @@ def validate_port_range(start: int, end: int) -> None:
     if start > end:
         raise ValidationError(f"Plage inversée : début ({start}) > fin ({end}).")
 
+
 def validate_threads(n: int) -> None:
     if n < 1:
         raise ValidationError(f"Le nombre de threads doit être >= 1 (reçu : {n}).")
     if n > 500:
         raise ValidationError(f"Le nombre de threads ne doit pas dépasser 500 (reçu : {n}).")
-    

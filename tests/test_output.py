@@ -1,7 +1,6 @@
 # --- Tests de l'export JSON. ---
 
-import json 
-from pathlib import Path 
+import json
 
 from network_toolkit.output import export_to_json
 
@@ -36,6 +35,7 @@ def test_export_to_json_creates_file(tmp_path):
     assert payload["results"][0]["port"] == 80
     assert payload["results"][1]["banner"] == "MariaDB"
 
+
 def test_export_to_json_empty_results(tmp_path):
     output_file = tmp_path / ("empty.json")
     metadata = {
@@ -51,7 +51,7 @@ def test_export_to_json_empty_results(tmp_path):
     export_to_json([], metadata, str(output_file))
 
     with open(output_file, encoding="utf-8") as f:
-        payload =json.load(f)
+        payload = json.load(f)
 
     assert payload["summary"]["open_ports"] == 0
     assert payload["results"] == []
